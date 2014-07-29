@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oxm="http://www.springframework.org/schema/oxm"
+       xmlns:sws="http://www.springframework.org/schema/web-services" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       					http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+       					http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-1.5.xsd
+	   					http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	   					http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+	   					http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+	   					http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+    <!-- If you get an MBeanTrustPermission error then
+         Just add the following lines to your java.policy file under <JRE_HOME>/lib/security.
+
+         grant {
+             // JMX Java Management eXtensions
+             permission javax.management.MBeanTrustPermission "register";
+         };
+
+         - In order to build you must use the following commands to add the required jars to your local repository
+           mvn install:install-file -Dfile=RBClient.jar -DgroupId=com.convergys -DartifactId=rb-client -Dversion=1.0.0 -Dpackaging=jar
+           mvn install:install-file -Dfile=pf-j2ee.jar -DgroupId=com.convergys -DartifactId=rb-spring -Dversion=1.0.0 -Dpackaging=jar
+           mvn install:install-file -Dfile=wlclient.jar -DgroupId=com.bea -DartifactId=wl-client -Dversion=10.0.1.0 -Dpackaging=jar
+
+         - New properties have been added for the JNDI lookup.  They can be found in resources/dev/customer-services.properties
+    -->
+
+<!-- 	    <jee:remote-slsb id="ECA_Account" -->
+<!-- 	                 jndi-name="Convergys/ECA/Account" -->
+<!-- 	                 business-interface="com.convergys.geneva.j2ee.account.AccountService" -->
+<!-- 	                 home-interface="com.convergys.geneva.j2ee.account.AccountSessionHome" expose-access-context="true" -->
+<!-- 			 lookup-home-on-startup="false" refresh-home-on-connect-failure="true" -->
+<!-- 	                 environment-ref="ejbProperties"> -->
+<!-- 	    </jee:remote-slsb> -->
+        
+<!--         <jee:remote-slsb id="ECA_Payment" -->
+<!--                      jndi-name="Convergys/ECA/Payment" -->
+<!--                      business-interface="com.convergys.geneva.j2ee.payment.PaymentService" -->
+<!--                      home-interface="com.convergys.geneva.j2ee.payment.PaymentSessionHome"  -->
+<!--                      expose-access-context="true" -->
+<!-- 	             lookup-home-on-startup="false" refresh-home-on-connect-failure="true" -->
+<!--                      environment-ref="ejbProperties"> -->
+<!--     	</jee:remote-slsb> -->
+    	
+<!--     	<jee:remote-slsb id="ECA_Contact" -->
+<!--                      jndi-name="Convergys/ECA/Contact" -->
+<!--                      business-interface="com.convergys.geneva.j2ee.contact.ContactService" -->
+<!--                      home-interface="com.convergys.geneva.j2ee.contact.ContactSessionHome" expose-access-context="true" -->
+<!-- 		     lookup-home-on-startup="false" refresh-home-on-connect-failure="true" -->
+<!--                      environment-ref="ejbProperties"> -->
+<!--     	</jee:remote-slsb> -->
+    
+<!--     	<jee:remote-slsb id="ECA_Customer" -->
+<!--                      jndi-name="Convergys/ECA/Customer" -->
+<!--                      business-interface="com.convergys.geneva.j2ee.customer.CustomerService" -->
+<!--                      home-interface="com.convergys.geneva.j2ee.customer.CustomerSessionHome" expose-access-context="true" -->
+<!--        	 	     lookup-home-on-startup="false" refresh-home-on-connect-failure="true" -->
+<!--  		     environment-ref="ejbProperties"> -->
+<!--     	</jee:remote-slsb> -->
+    	
+<!--     	<jee:remote-slsb id="ECA_Subscription" -->
+<!--                      jndi-name="Convergys/ECA/Subscription" -->
+<!--                      business-interface="com.convergys.geneva.j2ee.subscription.SubscriptionService" -->
+<!--                      home-interface="com.convergys.geneva.j2ee.subscription.SubscriptionSessionHome" -->
+<!--                      expose-access-context="true" -->
+<!--  		     lookup-home-on-startup="false" refresh-home-on-connect-failure="true" -->
+<!--                      environment-ref="ejbProperties"> -->
+<!--     </jee:remote-slsb> -->
+
+<!--     <bean id="ejbProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean"> -->
+<!--         <property name="properties"> -->
+<!--             <props> -->
+<!--                 <prop key="java.naming.factory.initial">org.jnp.interfaces.NamingContextFactory</prop> -->
+<!--                 <prop key="java.naming.factory.initial">${jndi.rbm.ejb.factory.initial}</prop> -->
+<!--                 <prop key="java.naming.provider.url">${jndi.rbm.ejb.provider.url}</prop> -->
+<!--                 <prop key="java.naming.security.principal">${jndi.rbm.ejb.security.principal}</prop> -->
+<!--                 <prop key="java.naming.security.credentials">${jndi.rbm.ejb.security.credentials}</prop> -->
+<!--             </props> -->
+<!--         </property> -->
+<!--     </bean> -->
+    
+</beans>

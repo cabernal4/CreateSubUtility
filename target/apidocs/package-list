@@ -1,0 +1,10 @@
+com.cellularsouth.autopay.dao
+com.cellularsouth.autopay.endpoints
+com.cellularsouth.autopay.exceptions
+com.cellularsouth.autopay.models.jpa
+com.cellularsouth.autopay.schema
+com.cellularsouth.autopay.util
+com.cspire.si.autopay.adapters
+com.cspire.si.autopay.crm.dao
+com.cspire.si.autopay.models
+com.cspire.si.autopay.utils

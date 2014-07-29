@@ -1,0 +1,36 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			xmlns:tns="http://www.cellularsouth.com/createsub/schema" 
+			targetNamespace="http://www.cellularsouth.com/createsub/schema" 
+			elementFormDefault="qualified" 
+			attributeFormDefault="unqualified">
+	
+	<xsd:element name="CreateSubForm">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Environment" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="CustomerId" type="xsd:string" minOccurs="0" maxOccurs="1"/>			
+				<xsd:element name="AccountId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="SubscriptionId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="Mdn" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="Min" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="PaymentType" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+				<xsd:element name="AccountType" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="SubscriptionType" type="xsd:string" minOccurs="0" maxOccurs="1"/>				
+				<xsd:element name="Error" type="xsd:string" minOccurs="0" maxOccurs="1"/>						
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Fault">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="FaultDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="FaultMessage" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="FaultCode" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="FaultStack" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="RecommendedAction" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+</xsd:schema>

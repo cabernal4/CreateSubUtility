@@ -1,0 +1,55 @@
+<definitions name="CreateSubUtility"
+	targetNamespace="http://www.cellularsouth.com/createsub/ws/"
+	xmlns="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:schema="http://www.cellularsouth.com/createsub/schema"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:tns="http://www.cellularsouth.com/createsub/ws/">
+	
+	<types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.cellularsouth.com/createsub/schema" schemaLocation="CreateSubUtilitySchema.xsd" />
+		</xsd:schema>
+	</types>
+
+	<!-- CreateSub messages -->
+	<message name="CreateSubRequestMessage">
+		<part name="CreateSubRequestMessage" element="schema:CreateSubForm" />
+	</message>
+	<message name="CreateSubResponseMessage">
+		<part name="CreateSubResponseMessage" element="schema:CreateSubForm" />
+	</message>
+	
+	<!-- Fault message -->
+	<message name="FaultMsg">
+		<part name="Fault" element="schema:Fault" />
+	</message>
+	
+	<portType name="CreateSubServicePort">
+		<operation name="CreateSub">
+			<input message="tns:CreateSubRequestMessage" />
+			<output message="tns:CreateSubResponseMessage" />
+			<fault name="Fault" message="tns:FaultMsg" />
+		</operation>
+	</portType>
+	
+	<binding name="CreateSubServiceBinding" type="tns:CreateSubServicePort">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<operation name="CreateSub">
+			<soap:operation soapAction="http://cellularsouth.com/autopay/ws/createSub" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+	</binding>
+	
+	<service name="CreateSubService">
+		<port name="CreateSubServicePort" binding="tns:CreateSubServiceBinding">
+			<soap:address location="http://localhost:8091/autopay-services/ws/createSubUtility" />
+		</port>
+	</service>
+	
+</definitions>

@@ -1,0 +1,35 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd">
+
+    <oxm:jaxb2-marshaller id="marshaller" contextPath="com.cellularsouth.createsub.schema"/>
+
+    <bean class="com.cellularsouth.autopay.endpoints.AutopayServicesExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="java.lang.Exception">CLIENT</prop>
+            </props>
+        </property>
+        <property name="marshaller" ref="marshaller"/>
+    </bean>
+
+    <bean class="org.springframework.ws.server.endpoint.mapping.PayloadRootAnnotationMethodEndpointMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="loggingInterceptorLegacy" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="createSubUtility" class="org.springframework.ws.wsdl.wsdl11.SimpleWsdl11Definition">
+        <constructor-arg value="classpath:/CreateSubUtility.wsdl"/>
+    </bean>
+
+	<bean id="createAndActivateSubscriptionEndpoint" class="com.cellularsouth.autopay.endpoints.CreateAndActivateSubscriptionEndpoint"/>
+    
+    <bean id="CreateSubUtilitySchema" class="org.springframework.xml.xsd.SimpleXsdSchema">
+        <property name="xsd" value="classpath:/CreateSubUtilitySchema.xsd" />
+    </bean>
+    <bean id="loggingInterceptorLegacy" class="com.cellularsouth.si.wscommon.spring.ws.logging.SoapEnvelopeLoggingInterceptor" />
+</beans>

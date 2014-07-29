@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd">
+
+	<context:property-placeholder location="classpath:global.properties,file:${app.resource.dir}/autopay-services/autopay-services.properties"/>
+	
+	<context:annotation-config /> 
+    <context:component-scan base-package="com.cspire.si"/>
+
+    <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory" />
+
+	
+	<bean id="crmLookup" class="com.cellularsouth.crmlookup.CRMLookupImpl">
+		<property name="dataSource" ref="csdbDS"/>
+	</bean>
+	
+<!-- 	<bean id="eventLogger" class="com.cellularsouth.event.JmsEventLogger"> -->
+<!-- 		<property name="connectionFactory" ref="connectionFactory"/> -->
+<!-- 		<property name="queue" ref="queue"/> -->
+<!-- 	</bean> -->
+	
+	<jee:jndi-lookup id="connectionFactory" jndi-name="${jms.connectionFactory}" resource-ref="true"/>
+	
+	<jee:jndi-lookup id="queue" jndi-name="${jms.queue}" resource-ref="true"/>
+	
+
+	<!-- JPA configuration -->
+
+	<bean id="csdbDao" class="com.cellularsouth.autopay.dao.CSDBDaoImpl"/>
+	
+	<bean id="crmCustomerSqlDao" class="com.cspire.si.autopay.crm.dao.CrmCustomerSqlDaoImpl" />
+
+    <bean id="cacheManager" class="net.sf.ehcache.CacheManager" factory-method="getInstance" />
+    
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="csdbDS"/>
+		<property name="jpaPropertyMap">
+            <map>
+	            <entry key="hibernate.transaction.flush_before_completion" value="false"/>
+	            <entry key="hibernate.connection.autocommit" value="false"/>
+	            <entry key="hibernate.cache.use_second_level_cache" value="true"/>
+	            <entry key="hibernate.cache.use_query_cache" value="true"/>
+				<entry key="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.SingletonEhCacheProvider"/>
+	            <entry key="hibernate.archive.autodetection" value="false" />
+            </map>
+        </property>
+	</bean>
+
+	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+	
+	<jee:jndi-lookup id="csdbDS" jndi-name="${jndi.csdb}" resource-ref="true" />
+	
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+    
+    <tx:annotation-driven mode="proxy" transaction-manager="transactionManager" proxy-target-class="true"/>
+
+	<bean id="crmLookupAccountMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+	 	<property name="contextPaths">
+			<array>
+				<value>com.cellularsouth.commonentities.v2</value>
+				<value>com.cellularsouth.businessentities.client.v2.referencedata.crmlookupaccount</value>
+				<value>com.cellularsouth.businessservices.client.v2.referencedata.crmlookupaccount</value>
+			</array>
+		</property>
+	</bean>
+	
+	<bean id="webServiceCrmLookupAccount" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<constructor-arg ref="messageFactory" />
+		<property name="defaultUri" value="${crmLookupAccount.uri}"/>
+		<property name="marshaller" ref="crmLookupAccountMarshaller" />
+		<property name="unmarshaller" ref="crmLookupAccountMarshaller" />
+	</bean>
+	
+	<bean id="crmLookupCustomerMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+	 	<property name="contextPaths">
+			<array>
+				<value>com.cellularsouth.commonentities.v2</value>
+				<value>com.cellularsouth.businessentities.client.v2.referencedata.crmlookupcustomer</value>
+				<value>com.cellularsouth.businessservices.client.v2.referencedata.crmlookupcustomer</value>
+			</array>
+		</property>
+	</bean>
+	
+	<bean id="webServiceCrmLookupCustomer" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<constructor-arg ref="messageFactory" />
+		<property name="defaultUri" value="${crmLookupCustomer.uri}"/>
+		<property name="marshaller" ref="crmLookupCustomerMarshaller" />
+		<property name="unmarshaller" ref="crmLookupCustomerMarshaller" />
+	</bean>
+	
+<!-- 	<bean id="getBankRouteInfoMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller"> -->
+<!-- 	 	<property name="contextPaths"> -->
+<!-- 			<array> -->
+<!-- 				<value>com.cellularsouth.commonentities.v2</value> -->
+<!-- 				<value>com.cellularsouth.businessentities.client.v2.payment.getbankrouteinfo</value> -->
+<!-- 				<value>com.cellularsouth.businessservices.client.v2.payment.getbankrouteinfo</value> -->
+<!-- 			</array> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+	
+<!-- 	<bean id="webServiceGetBankRouteInfo" class="org.springframework.ws.client.core.WebServiceTemplate"> -->
+<!-- 		<constructor-arg ref="messageFactory" /> -->
+<!-- 		<property name="defaultUri" value="${getBankRouteInfo.uri}"/> -->
+<!-- 		<property name="marshaller" ref="getBankRouteInfoMarshaller" /> -->
+<!-- 		<property name="unmarshaller" ref="getBankRouteInfoMarshaller" /> -->
+<!-- 	</bean> -->
+	
+<!-- 	<oxm:jaxb2-marshaller id="paymentServicesMarshaller" contextPath="com.cellularsouth.payment.schema"/> -->
+	
+<!-- 	<bean id="paymentServicesTemplate" class="org.springframework.ws.client.core.WebServiceTemplate"> -->
+<!-- 		<property name="marshaller" ref="paymentServicesMarshaller"/> -->
+<!-- 		<property name="unmarshaller" ref="paymentServicesMarshaller" /> -->
+<!-- 		<property name="defaultUri" value="${paymentServices.uri}" /> -->
+<!-- 	</bean> -->
+
+<!-- 	<bean id="webServiceUpdateAccount" class="org.springframework.ws.client.core.WebServiceTemplate"> -->
+<!-- 		<constructor-arg ref="messageFactory" /> -->
+<!-- 		<property name="defaultUri" value="${updateAccount.uri}"/> -->
+<!-- 		<property name="marshaller" ref="updateAccountMarshaller" /> -->
+<!-- 		<property name="unmarshaller" ref="updateAccountMarshaller" /> -->
+<!-- 	</bean> -->
+	
+<!-- 	<bean id="webServiceGetAccount" class="org.springframework.ws.client.core.WebServiceTemplate"> -->
+<!-- 		<constructor-arg ref="messageFactory" /> -->
+<!-- 		<property name="defaultUri" value="${getAccount.uri}"/> -->
+<!-- 		<property name="marshaller" ref="getAccountMarshaller" /> -->
+<!-- 		<property name="unmarshaller" ref="getAccountMarshaller" /> -->
+<!-- 	</bean> -->
+	
+<!-- 	<oxm:jaxb2-marshaller id="sendEmailServiceMarshaller"> -->
+<!-- 		<oxm:class-to-be-bound name="com.cellularsouth.commservices.schema.SendEmail"/> -->
+<!-- 	</oxm:jaxb2-marshaller> -->
+	
+<!-- 	<bean id="sendEmailServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate"> -->
+<!-- 		<property name="marshaller" ref="sendEmailServiceMarshaller" /> -->
+<!-- 		<property name="unmarshaller" ref="sendEmailServiceMarshaller" /> -->
+<!-- 		<property name="defaultUri" value="${sendEmail.uri}" /> -->
+<!-- 	</bean> -->
+	
+<!-- 	<bean id="updateAccountMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller"> -->
+<!-- 	 	<property name="contextPaths"> -->
+<!-- 			<array> -->
+<!-- 				<value>com.cellularsouth.commonentities.v2</value> -->
+<!-- 				<value>com.cellularsouth.businessentities.client.v2.account.updateaccount</value> -->
+<!-- 				<value>com.cellularsouth.businessservices.client.v2.account.updateaccount</value> -->
+<!-- 			</array> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="getAccountMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller"> -->
+<!-- 	 	<property name="contextPaths"> -->
+<!-- 			<array> -->
+<!-- 				<value>com.cellularsouth.commonentities.v2</value> -->
+<!-- 				<value>com.cellularsouth.businessentities.client.v2.account.getaccount</value> -->
+<!-- 				<value>com.cellularsouth.businessservices.client.v2.account.getaccount</value> -->
+<!-- 			</array> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+	
+	
+	<oxm:jaxb2-marshaller id="numberManagementServiceMarshaller" contextPath="com.cellularsouth.primenumbermanagement.schema"/>
+	<oxm:jaxb2-marshaller id="accountServiceMarshaller" contextPath="com.cellularsouth.customer.schema"/>
+	<oxm:jaxb2-marshaller id="customerServiceMarshaller" contextPath="com.cellularsouth.customer.schema"/>
+	<oxm:jaxb2-marshaller id="subscriptionServiceMarshaller" contextPath="com.cellularsouth.customer.schema"/>
+	
+	<bean id="numberManagementServiceTemplateTEST" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="numberManagementServiceMarshaller" />
+		<property name="unmarshaller" ref="numberManagementServiceMarshaller" />
+		<property name="defaultUri" value="${numberManagement.uri.test}" />
+	</bean>
+	
+	<bean id="accountServiceTemplateTEST" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="accountServiceMarshaller" />
+		<property name="unmarshaller" ref="accountServiceMarshaller" />
+		<property name="defaultUri" value="${accountServices.uri.test}" />
+	</bean>
+	
+	<bean id="customerServiceTemplateTEST" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="customerServiceMarshaller" />
+		<property name="unmarshaller" ref="customerServiceMarshaller" />
+		<property name="defaultUri" value="${customerServices.uri.test}" />
+	</bean>
+	
+	<bean id="subscriptionServiceTemplateTEST" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="subscriptionServiceMarshaller" />
+		<property name="unmarshaller" ref="subscriptionServiceMarshaller" />
+		<property name="defaultUri" value="${subscriptionServices.uri.test}" />
+	</bean>	
+	
+	
+	<bean id="numberManagementServiceTemplateINT" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="numberManagementServiceMarshaller" />
+		<property name="unmarshaller" ref="numberManagementServiceMarshaller" />
+		<property name="defaultUri" value="${numberManagement.uri.int}" />
+	</bean>
+	
+	<bean id="accountServiceTemplateINT" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="accountServiceMarshaller" />
+		<property name="unmarshaller" ref="accountServiceMarshaller" />
+		<property name="defaultUri" value="${accountServices.uri.int}" />
+	</bean>
+	
+	<bean id="customerServiceTemplateINT" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="customerServiceMarshaller" />
+		<property name="unmarshaller" ref="customerServiceMarshaller" />
+		<property name="defaultUri" value="${customerServices.uri.int}" />
+	</bean>
+	
+	<bean id="subscriptionServiceTemplateINT" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="subscriptionServiceMarshaller" />
+		<property name="unmarshaller" ref="subscriptionServiceMarshaller" />
+		<property name="defaultUri" value="${subscriptionServices.uri.int}" />
+	</bean>
+	
+	
+	<bean id="numberManagementServiceTemplateDEV" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="numberManagementServiceMarshaller" />
+		<property name="unmarshaller" ref="numberManagementServiceMarshaller" />
+		<property name="defaultUri" value="${numberManagement.uri.dev}" />
+	</bean>
+	
+	<bean id="accountServiceTemplateDEV" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="accountServiceMarshaller" />
+		<property name="unmarshaller" ref="accountServiceMarshaller" />
+		<property name="defaultUri" value="${accountServices.uri.dev}" />
+	</bean>
+	
+	<bean id="customerServiceTemplateDEV" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="customerServiceMarshaller" />
+		<property name="unmarshaller" ref="customerServiceMarshaller" />
+		<property name="defaultUri" value="${customerServices.uri.dev}" />
+	</bean>
+	
+	<bean id="subscriptionServiceTemplateDEV" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="subscriptionServiceMarshaller" />
+		<property name="unmarshaller" ref="subscriptionServiceMarshaller" />
+		<property name="defaultUri" value="${subscriptionServices.uri.dev}" />
+	</bean>
+	
+	
+	<bean id="numberManagementServiceTemplateSAND" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="numberManagementServiceMarshaller" />
+		<property name="unmarshaller" ref="numberManagementServiceMarshaller" />
+		<property name="defaultUri" value="${numberManagement.uri.sand}" />
+	</bean>
+	
+	<bean id="accountServiceTemplateSAND" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="accountServiceMarshaller" />
+		<property name="unmarshaller" ref="accountServiceMarshaller" />
+		<property name="defaultUri" value="${accountServices.uri.sand}" />
+	</bean>
+	
+	<bean id="customerServiceTemplateSAND" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="customerServiceMarshaller" />
+		<property name="unmarshaller" ref="customerServiceMarshaller" />
+		<property name="defaultUri" value="${customerServices.uri.sand}" />
+	</bean>
+	
+	<bean id="subscriptionServiceTemplateSAND" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="subscriptionServiceMarshaller" />
+		<property name="unmarshaller" ref="subscriptionServiceMarshaller" />
+		<property name="defaultUri" value="${subscriptionServices.uri.sand}" />
+	</bean>
+
+
+	
+	<bean id="accountServiceTemplateLOCAL" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="accountServiceMarshaller" />
+		<property name="unmarshaller" ref="accountServiceMarshaller" />
+		<property name="defaultUri" value="${accountServices.uri.local}" />
+	</bean>
+	
+	<bean id="customerServiceTemplateLOCAL" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="customerServiceMarshaller" />
+		<property name="unmarshaller" ref="customerServiceMarshaller" />
+		<property name="defaultUri" value="${customerServices.uri.local}" />
+	</bean>
+	
+	<bean id="subscriptionServiceTemplateLOCAL" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="marshaller" ref="subscriptionServiceMarshaller" />
+		<property name="unmarshaller" ref="subscriptionServiceMarshaller" />
+		<property name="defaultUri" value="${subscriptionServices.uri.local}" />
+	</bean>
+</beans>
+

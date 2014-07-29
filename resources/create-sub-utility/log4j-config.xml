@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="AutopayServicesAppender" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/usr/local/csapps/resources/autopay-services/logs/autopay-services.log"/>
+        <param name="datePattern" value="'.'yyyy-MM-dd"/>
+	    <layout class="org.apache.log4j.PatternLayout">
+		    <param name="ConversionPattern" value="%d{ABSOLUTE} %5p [%t] [%c{2}] - %m\n"/>
+        </layout>
+    </appender>
+
+    <logger name="com.cellularsouth.si.wscommon.spring.ws.logging.SoapEnvelopeLoggingInterceptor" additivity="false">
+        <level value="trace"/>
+        <appender-ref ref="AutopayServicesAppender"/>
+    </logger>
+
+    <logger name="com.cspire.si.autopay.routes" additivity="false">
+        <level value="trace"/>
+        <appender-ref ref="AutopayServicesAppender"/>
+    </logger>
+
+    <logger name="com.cellularsouth" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="AutopayServicesAppender"/>
+    </logger>
+
+    <logger name="com.cspire.si" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="AutopayServicesAppender"/>
+    </logger>
+
+    <logger name="org.springframework" additivity="false">
+        <level value="error"/>
+        <appender-ref ref="AutopayServicesAppender"/>
+    </logger>
+
+    <logger name="org.apache.camel" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="AutopayServicesAppender" />
+    </logger>
+
+    <logger name="org.apache.camel.*" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="AutopayServicesAppender" />
+    </logger>
+
+    <logger name="org.apache.camel.processor.interceptor" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="AutopayServicesAppender" />
+    </logger>
+
+    <logger name="log4j.logger.org.apache.camel" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="AutopayServicesAppender" />
+    </logger>
+
+    <logger name="org.apache.camel.core" additivity="false">
+        <level value="trace"/>
+        <appender-ref ref="AutopayServicesAppender" />
+    </logger>
+
+    <logger name="org.apache.camel.spring" additivity="false">
+        <level value="trace"/>
+        <appender-ref ref="AutopayServicesAppender" />
+    </logger>
+
+    <logger name="org.apache.camel.spring.handler.CamelNamespaceHandler" additivity="false">
+        <level value="trace"/>
+        <appender-ref ref="AutopayServicesAppender" />
+    </logger>
+
+    <logger name="org.hibernate">
+        <level value="debug"/>
+        <appender-ref ref="AutopayServicesAppender" />
+    </logger>
+</log4j:configuration>
